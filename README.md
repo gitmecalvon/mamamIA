@@ -14,8 +14,8 @@ Apoyo al diagnóstico de cancer de mama mediante algoritmos de Machine Learning.
 
 # Links Externos
 - [Medium article] (https://medium.com/@MaMamIA_/95dbc1a0ea09)
-- 
+
 
 # Agradecimientos
 - [Saturdays AI](https://www.saturdays.ai/) Zaragoza. 
-- [Winconsis]
+- [Winconsin Dataset](https://archive.ics.uci.edu/ml/datasets/breast+cancer+wisconsin+(diagnostic)) 

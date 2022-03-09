@@ -2,27 +2,21 @@ from numpy import dtype
 import streamlit as st
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
-
+import numpy as np
 import joblib  as jl
 
 
-@st.cache
+#@st.cache
 def getScaler():
-    
-    pd.read_csv('https://github.com/gitmecalvon/mamamIA/blob/main/resources/data/cleaned/TRAIN.csv')
+    # Cargo el dataset para poder normalizar los valores recogidos en el formulario
+    print ("cargando dataset")
+    data=pd.read_csv('https://raw.githubusercontent.com/gitmecalvon/mamamIA/main/resources/data/cleaned/train_web.csv',sep=';')
+    print("dataset cargado")
     scaler = StandardScaler()
-    scaler.fit(pd.DataFrame)
+    scaler.fit(data)
     return scaler
 
 
-
-def estandar(dato):
-
-    scaler = StandardScaler()
-    scaler.fit(dato)
-    dato=pd.DataFrame(scaler.fit_transform(dato),columns=dato.columns)
-   
-    return dato
 
 
 col=['radius_mean', 'texture_mean', 'perimeter_mean',
@@ -36,17 +30,21 @@ modnames=['mlp_final.pkl','svm_final.pkl','lr_final.pkl']
 
 
 
-
 # cargandolos para poder usarlos desde un sidebar si da tiempo
-def cargaModelos ():
+def cargaModelos (indice):
     print('Preparando el guardado de Modelos ' )
-    mlp=jl.load(modnames[0])
-    print('Perceptron multicapa cargado ' )
-    svm=jl.load(modnames[1])
-    print('SVM Cargado')
-    lr=jl.load(modnames[2])
-    print('Regresion Logistica cargado')
-    print('*************')
+    modelo=jl.load(modnames[indice])
+    return modelo
+
+def interpreta (prediccion):
+    respuesta ="Los datos aportados hacen indicar "
+    if prediccion ==1:
+        respuesta= respuesta + "Maligno"
+    else:
+         respuesta= respuesta + "Benigno"
+    return respuesta
+
+
 
 # radius_mean       14.12
 # texture_mean      19.28
@@ -84,7 +82,7 @@ def contruyeFormulario():
     radius_mean = form.number_input( label="radius_mean", min_value=0.00000, max_value=20.0,value=13.54, step=0.0001,format="%4f")
     texture_mean = form.number_input(label="texture_mean", min_value=0.00000, max_value=36.0,value=14.36, step=0.0001,format="%4f")
     perimeter_mean = form.number_input(label="perimeter_mean", min_value=0.00000, max_value=150.0,value=87.46, step=0.0001,format="%4f")
-    area_mean = form.number_input(label="area_mean", min_value=0.00000, max_value=600.0,value=566.3, step=0.0001,format="%4f")
+    area_mean = form.number_input(label="area_mean", min_value=0.00000, max_value=1600.0,value=566.3, step=0.0001,format="%4f")
     compactness_mean = form.number_input(label="compactness_mean", min_value=0.00000, max_value=1.0,value=0.08129, step=0.0001,format="%5f")
     concavity_mean = form.number_input(label="concavity_mean", min_value=0.00000, max_value=1.0,value=0.06664, step=0.0001,format="%5f")
 
@@ -107,48 +105,27 @@ def contruyeFormulario():
     submit = form.form_submit_button(label="Predicción")
 
     if submit:
-           
-            # st.write("slider", valor)
-            st.write ([[radius_mean, texture_mean, perimeter_mean ,
-            area_mean ,  compactness_mean ,  concavity_mean ,
-            concave_points_mean ,  area_se ,  radius_worst ,  texture_worst ,
-            perimeter_worst ,  area_worst ,  smoothness_worst ,
-            compactness_worst ,  concavity_worst ,  concavepoints_worst ]])
-            st.write ("cargando modelo")
-            st.write  (modnames[2])
-            algoritmo=jl.load(modnames[2])
-            resultado=999
-            st.write (resultado)
-            scaler = getScaler()
-            x_normalizado =scaler.transform ([[radius_mean, texture_mean, perimeter_mean ,area_mean ,  compactness_mean ,  concavity_mean ,
+        #  Escalamos los datos del formulario
+            scaler=getScaler()
+            nbnormaliz=scaler.transform  ([[radius_mean, texture_mean, perimeter_mean ,area_mean ,  compactness_mean ,  concavity_mean ,
             concave_points_mean ,  area_se ,  radius_worst ,  texture_worst ,perimeter_worst ,  area_worst ,  smoothness_worst ,
             compactness_worst ,  concavity_worst ,  concavepoints_worst ]])
-            resultado=algoritmo.predict (x_normalizado)
-            st.write (resultado)
+          
+        #    Recuperamos el modelo
+            print ("cargando modelo")
+            print (modnames[2])
+            algoritmo=cargaModelos(2)
 
-
-            st.write ("El resutado estandarizando las variables",resultado)
-
-
-
-            # ojo que predict requiere de una matriz de dos dimensiones y devuelve lo mismo en la prediccion
-            resultado = algoritmo.predict ([[radius_mean, texture_mean, perimeter_mean ,area_mean ,  compactness_mean ,  concavity_mean ,
-            concave_points_mean ,  area_se ,  radius_worst ,  texture_worst ,perimeter_worst ,  area_worst ,  smoothness_worst ,
-            compactness_worst ,  concavity_worst ,  concavepoints_worst ]] )
-            st.write ("El resutado sin estandarizar  las variables",resultado)
-
-            #sacarlo a función sería lo suyo
-            st.write("El resultado del algoritmo")
-            st.write (resultado)
-            # st.write (jl)
-            st.write ("Los datos aportados hacen indicar ")
-            if resultado ==1:
-                st.write ("Maligno")
-            else:
-                st.write ("Benigno")
+        #  Realizamos la prediccion
+            
+            print ("Preparando la prediccion...")
+            prediccion=algoritmo.predict (nbnormaliz)
+            print (prediccion)
+            st.write (interpreta (prediccion))
+            
 
 def main():
-    cargaModelos()
+    
     contruyeFormulario()
  
 if __name__ == '__main__':
@@ -160,7 +137,8 @@ if __name__ == '__main__':
 
 
 
-        
+
+
 
 
 

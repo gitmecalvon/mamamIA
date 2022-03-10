@@ -4,6 +4,7 @@ Apoyo al diagnóstico de cancer de mama mediante algoritmos de Machine Learning.
 - MLP
 - Regresion Logística 
 
+Se encuentra el código de limpieza de datos, análisis de dichos datos, selección de modelo y codigo de la aplicación web desplegada con Stremalit
 
 
 # Prerequisitos

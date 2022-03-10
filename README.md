@@ -1,5 +1,10 @@
 # Mama mIA
-Apoyo al diagnóstico de cancer de mama mediante algoritmos de Machine Learning.
+Apoyo al diagnóstico de cancer de mama mediante algoritmos de Machine Learning. Modelos seleccionados de algoritos supervisados:
+- SVM
+- MLP
+- Regresion Logística 
+
+
 
 # Prerequisitos
 - [Python 3.X.X](https://www.python.org/downloads/)
